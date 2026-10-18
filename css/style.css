@@ -216,3 +216,50 @@ body {
     z-index: 0;
   }
 }
+
+
+/* ====================================================
+   COMPACT ELEGANT VALUE SECTION (MOBILE OPTIMIZED)
+   ==================================================== */
+
+.value-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.value-card:hover {
+  transform: translateY(-4px);
+  border-color: #0f172a;
+  box-shadow: 0 12px 25px -5px rgba(15, 23, 42, 0.08);
+}
+
+/* Animasi Ikon & Accent Line */
+.value-icon-box {
+  background: #f8fafc;
+  color: #0f172a;
+  transition: all 0.35s ease;
+}
+
+.value-card:hover .value-icon-box {
+  background: #0f172a;
+  color: #ffffff;
+  transform: scale(1.08) rotate(-3deg);
+}
+
+.value-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: #0f172a;
+  transition: width 0.35s ease;
+}
+
+.value-card:hover .value-accent {
+  width: 100%;
+}
