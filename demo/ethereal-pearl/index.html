@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">The Wedding Invitation</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Feather Icons -->
+  <script src="https://unpkg.com/feather-icons"></script>
+  <!-- AOS Animation Library CDN -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-serif-luxury { font-family: 'Bodoni Moda', serif; }
+    
+    body.no-scroll {
+      overflow: hidden !important;
+      height: 100vh !important;
+    }
+
+    .bg-pearl-pattern {
+      background-color: #FAFAFA;
+      background-image: radial-gradient(#E2E8F0 0.8px, transparent 0.8px);
+      background-size: 24px 24px;
+    }
+
+    /* Cover Animation Slide Up */
+    #cover-modal { 
+      transition: transform 0.9s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.7s ease; 
+    }
+    #cover-modal.opened { 
+      transform: translateY(-100%); 
+      opacity: 0; 
+      pointer-events: none; 
+    }
+
+    /* Ken Burns Hero Effect */
+    @keyframes kenburns {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+    .animate-kenburns {
+      animation: kenburns 20s infinite alternate ease-in-out;
+    }
+
+    /* Floating Button Pulse Animation */
+    @keyframes btnPulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+    }
+    .btn-glow-pulse {
+      animation: btnPulse 2s infinite;
+    }
+
+    /* Spinning Music Icon Animation */
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin-slow {
+      animation: spinSlow 5s linear infinite;
+    }
+  </style>
+</head>
+<body class="bg-pearl-pattern text-stone-800 antialiased selection:bg-stone-900 selection:text-white no-scroll">
+
+  <!-- ========================================================= -->
+  <!-- 1. FULLSCREEN OPENING COVER (NO SCROLL LOCK) -->
+  <!-- ========================================================= -->
+  <div id="cover-modal" class="fixed inset-0 z-50 bg-stone-950 text-stone-100 flex flex-col items-center justify-between p-6 text-center overflow-hidden">
+    <div id="cover-bg-blur" class="absolute inset-0 opacity-40 bg-cover bg-center filter blur-2xl scale-110"></div>
+    <div class="absolute inset-0 bg-black/50"></div>
+
+    <!-- Header Text Cover -->
+    <div class="relative z-10 pt-10 space-y-2">
+      <span class="text-[10px] font-extrabold tracking-[0.4em] uppercase text-stone-300 block">THE WEDDING CELEBRATION OF</span>
+      <h1 id="cover-couple-name" class="font-serif-luxury text-4xl sm:text-6xl text-stone-100 font-normal italic tracking-wide">-</h1>
+    </div>
+
+    <!-- Frame Foto Mempelai + Nama Tamu -->
+    <div class="relative z-10 my-auto max-w-xs sm:max-w-sm w-full bg-stone-900/80 backdrop-blur-xl p-6 sm:p-8 rounded-[2.5rem] border border-stone-700/60 shadow-2xl space-y-5">
+      <div class="w-28 h-28 mx-auto rounded-full p-1 bg-gradient-to-tr from-stone-400 via-stone-100 to-stone-500 shadow-xl overflow-hidden ring-4 ring-white/10">
+        <img id="cover-thumb" src="" alt="Mempelai" class="w-full h-full object-cover rounded-full">
+      </div>
+
+      <div class="space-y-1">
+        <span class="text-[11px] text-stone-400 font-medium block">Kepada Yth. Bapak/Ibu/Saudara/i:</span>
+        <h2 id="guest-name" class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">Tamu Undangan</h2>
+      </div>
+
+      <p class="text-[10px] text-stone-400 italic leading-relaxed">Tanpa mengurangi rasa hormat, kami mengundang Anda untuk hadir dalam momen bahagia pernikahan kami.</p>
+    </div>
+
+    <!-- Tombol Buka Undangan -->
+    <div class="relative z-10 pb-10">
+      <button onclick="openInvitation()" class="btn-glow-pulse bg-white hover:bg-stone-100 text-stone-950 font-extrabold text-xs uppercase tracking-widest px-9 py-4 rounded-full shadow-2xl transition-all transform hover:scale-105 flex items-center gap-2.5 active:scale-95">
+        <i data-feather="mail" class="w-4 h-4 text-stone-900"></i> Buka Undangan
+      </button>
+    </div>
+  </div>
+
+  <!-- Audio Background Player -->
+  <audio id="bg-music" loop>
+    <source id="bg-music-src" src="" type="audio/mpeg">
+  </audio>
+
+  <!-- FLOATING MINIMALIST BOTTOM NAVBAR (iOS Dock Style) -->
+  <nav id="bottom-navbar" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 bg-stone-900/85 backdrop-blur-md text-stone-300 border border-stone-700/60 rounded-full px-5 py-2.5 shadow-2xl hidden transition-all duration-500 items-center gap-5 sm:gap-6">
+    <a href="#hero-section" class="flex flex-col items-center gap-0.5 text-stone-400 hover:text-white transition text-[9px] font-bold">
+      <i data-feather="home" class="w-4 h-4"></i>
+      <span>Home</span>
+    </a>
+    <a href="#mempelai-section" class="flex flex-col items-center gap-0.5 text-stone-400 hover:text-white transition text-[9px] font-bold">
+      <i data-feather="heart" class="w-4 h-4"></i>
+      <span>Mempelai</span>
+    </a>
+    <a href="#acara-section" class="flex flex-col items-center gap-0.5 text-stone-400 hover:text-white transition text-[9px] font-bold">
+      <i data-feather="calendar" class="w-4 h-4"></i>
+      <span>Acara</span>
+    </a>
+    <a href="#galeri-section" class="flex flex-col items-center gap-0.5 text-stone-400 hover:text-white transition text-[9px] font-bold">
+      <i data-feather="image" class="w-4 h-4"></i>
+      <span>Galeri</span>
+    </a>
+    <a href="#rsvp-section" class="flex flex-col items-center gap-0.5 text-stone-400 hover:text-white transition text-[9px] font-bold">
+      <i data-feather="message-square" class="w-4 h-4"></i>
+      <span>RSVP</span>
+    </a>
+
+    <!-- Divider Line -->
+    <div class="w-px h-5 bg-stone-700/80"></div>
+
+    <!-- Toggle Music Button Inside Navbar -->
+    <button onclick="toggleMusic()" class="flex flex-col items-center gap-0.5 text-amber-400 hover:text-amber-300 transition text-[9px] font-bold">
+      <i data-feather="disc" id="music-icon" class="w-4 h-4 animate-spin-slow"></i>
+      <span id="music-text-status">Music</span>
+    </button>
+  </nav>
+
+  <!-- Lightbox Preview Modal Untuk Galeri -->
+  <div id="gallery-lightbox" onclick="closeLightbox()" class="fixed inset-0 z-50 bg-black/90 hidden flex items-center justify-center p-4 backdrop-blur-sm cursor-pointer">
+    <img id="lightbox-img" src="" alt="Gallery Large" class="max-w-full max-h-[90vh] rounded-2xl shadow-2xl object-contain">
+  </div>
+
+
+  <!-- ========================================================= -->
+  <!-- 2. FULL INVITATION MAIN CONTENT -->
+  <!-- ========================================================= -->
+  <main class="max-w-xl mx-auto bg-white min-h-screen shadow-2xl border-x border-stone-200/60 relative pb-28 overflow-hidden">
+
+    <!-- HERO SECTION -->
+    <section id="hero-section" class="relative h-[90vh] flex items-end justify-center pb-16 text-center text-white overflow-hidden">
+      <div id="hero-bg" class="absolute inset-0 bg-cover bg-center animate-kenburns scale-105"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent"></div>
+      
+      <div class="relative z-10 space-y-4 px-6">
+        <span class="text-xs tracking-[0.35em] text-stone-300 font-bold uppercase">WE ARE GETTING MARRIED</span>
+        <h1 id="hero-couple-name" class="font-serif-luxury text-6xl sm:text-7xl font-normal text-stone-100 italic">-</h1>
+        <p id="hero-event-date" class="text-xs tracking-widest font-semibold text-stone-300">-</p>
+        
+        <!-- Live Countdown Timer -->
+        <div class="grid grid-cols-4 gap-2 pt-6 max-w-xs mx-auto">
+          <div class="bg-stone-900/80 backdrop-blur-md p-3 rounded-2xl border border-stone-700/60">
+            <span id="cd-days" class="text-xl font-bold text-white block">00</span>
+            <span class="text-[9px] uppercase font-bold text-stone-400">Hari</span>
+          </div>
+          <div class="bg-stone-900/80 backdrop-blur-md p-3 rounded-2xl border border-stone-700/60">
+            <span id="cd-hours" class="text-xl font-bold text-white block">00</span>
+            <span class="text-[9px] uppercase font-bold text-stone-400">Jam</span>
+          </div>
+          <div class="bg-stone-900/80 backdrop-blur-md p-3 rounded-2xl border border-stone-700/60">
+            <span id="cd-minutes" class="text-xl font-bold text-white block">00</span>
+            <span class="text-[9px] uppercase font-bold text-stone-400">Menit</span>
+          </div>
+          <div class="bg-stone-900/80 backdrop-blur-md p-3 rounded-2xl border border-stone-700/60">
+            <span id="cd-seconds" class="text-xl font-bold text-white block">00</span>
+            <span class="text-[9px] uppercase font-bold text-stone-400">Detik</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUOTE SECTION -->
+    <section class="py-16 px-8 text-center bg-stone-50/70 border-b border-stone-100" data-aos="fade-up">
+      <div class="w-8 h-8 rounded-full bg-stone-200/80 flex items-center justify-center mx-auto mb-4 text-stone-600">
+        <i data-feather="heart" class="w-4 h-4"></i>
+      </div>
+      <p id="quote-text" class="font-serif-luxury italic text-stone-800 text-base sm:text-lg leading-relaxed max-w-md mx-auto mb-4">-</p>
+      <span id="quote-source" class="text-[10px] font-bold text-stone-500 uppercase tracking-widest">-</span>
+    </section>
+
+    <!-- PROFIL MEMPELAI -->
+    <section id="mempelai-section" class="py-20 px-8 text-center space-y-16">
+      <div class="space-y-2" data-aos="fade-up">
+        <span class="text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase block">THE BRIDE & GROOM</span>
+        <h2 class="font-serif-luxury text-4xl font-normal text-stone-900">Pasangan Mempelai</h2>
+      </div>
+
+      <!-- Groom -->
+      <div class="space-y-5" data-aos="fade-up">
+        <div class="w-44 h-44 mx-auto rounded-full overflow-hidden p-1.5 bg-stone-200 shadow-xl">
+          <img id="groom-photo" src="" alt="Groom" class="w-full h-full object-cover rounded-full">
+        </div>
+        <div class="space-y-1">
+          <h3 id="groom-name" class="font-serif-luxury text-3xl font-normal text-stone-900">-</h3>
+          <p id="groom-parents" class="text-xs text-stone-500 font-medium">-</p>
+        </div>
+      </div>
+
+      <div class="font-serif-luxury text-4xl text-stone-300 italic" data-aos="zoom-in">&</div>
+
+      <!-- Bride -->
+      <div class="space-y-5" data-aos="fade-up">
+        <div class="w-44 h-44 mx-auto rounded-full overflow-hidden p-1.5 bg-stone-200 shadow-xl">
+          <img id="bride-photo" src="" alt="Bride" class="w-full h-full object-cover rounded-full">
+        </div>
+        <div class="space-y-1">
+          <h3 id="bride-name" class="font-serif-luxury text-3xl font-normal text-stone-900">-</h3>
+          <p id="bride-parents" class="text-xs text-stone-500 font-medium">-</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RANGKAIAN ACARA -->
+    <section id="acara-section" class="py-20 px-8 bg-stone-900 text-white text-center rounded-[3rem] mx-4 my-10 shadow-2xl" data-aos="fade-up">
+      <div class="space-y-2 mb-12">
+        <span class="text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase block">SAVE THE DATE</span>
+        <h2 class="font-serif-luxury text-4xl font-normal text-stone-100">Rangkaian Acara</h2>
+      </div>
+
+      <div class="space-y-6 max-w-sm mx-auto">
+        <!-- Event 1 -->
+        <div class="p-6 rounded-2xl bg-stone-800/90 border border-stone-700/60 space-y-2 text-center" data-aos="zoom-in">
+          <h3 id="event1-title" class="font-serif-luxury text-2xl font-normal text-stone-100">-</h3>
+          <p id="event1-date" class="text-xs font-bold text-stone-300">-</p>
+          <p id="event1-time" class="text-xs text-stone-400">-</p>
+          <p id="event1-location" class="text-xs text-stone-400 pt-2 border-t border-stone-700/50 mt-2">-</p>
+        </div>
+
+        <!-- Event 2 -->
+        <div class="p-6 rounded-2xl bg-stone-800/90 border border-stone-700/60 space-y-2 text-center" data-aos="zoom-in">
+          <h3 id="event2-title" class="font-serif-luxury text-2xl font-normal text-stone-100">-</h3>
+          <p id="event2-date" class="text-xs font-bold text-stone-300">-</p>
+          <p id="event2-time" class="text-xs text-stone-400">-</p>
+          <p id="event2-location" class="text-xs text-stone-400 pt-2 border-t border-stone-700/50 mt-2">-</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-1 gap-3 pt-2">
+          <a id="google-maps-link" href="#" target="_blank" class="flex items-center justify-center gap-2 w-full bg-stone-100 hover:bg-white text-stone-900 font-bold text-xs uppercase py-3.5 rounded-full transition shadow-lg">
+            <i data-feather="map-pin" class="w-4 h-4"></i> Petunjuk Lokasi Maps
+          </a>
+          <button onclick="addToGoogleCalendar()" class="flex items-center justify-center gap-2 w-full bg-stone-800 hover:bg-stone-700 border border-stone-700 text-stone-200 font-bold text-xs uppercase py-3.5 rounded-full transition">
+            <i data-feather="calendar" class="w-4 h-4 text-amber-400"></i> Simpan Ke Google Calendar
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALERI FOTO MASONRY -->
+    <section id="galeri-section" class="py-16 px-8 bg-stone-50/80 border-y border-stone-100">
+      <div class="text-center space-y-2 mb-10" data-aos="fade-up">
+        <span class="text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase block">OUR MOMENTS</span>
+        <h2 class="font-serif-luxury text-3xl font-normal text-stone-900">Galeri Foto</h2>
+      </div>
+
+      <!-- Grid Foto Galeri -->
+      <div id="gallery-container" class="grid grid-cols-2 gap-3"></div>
+
+      <!-- Tombol Lihat Semua Foto -->
+      <div id="gallery-more-btn-box" class="mt-6 text-center hidden">
+        <button onclick="toggleFullGallery()" id="gallery-toggle-btn" class="bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold uppercase tracking-wider px-6 py-3 rounded-full transition shadow-md inline-flex items-center gap-2">
+          <i data-feather="image" class="w-3.5 h-3.5"></i> <span id="gallery-btn-text">Lihat Semua Foto</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- RSVP & UCAPAN DO A REALTIME -->
+    <section id="rsvp-section" class="py-16 px-8 text-center space-y-8" data-aos="fade-up">
+      <div class="space-y-2">
+        <span class="text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase block">RSVP & WISHES</span>
+        <h2 class="font-serif-luxury text-3xl font-normal text-stone-900">Konfirmasi Kehadiran</h2>
+        <p class="text-xs text-stone-500 leading-relaxed max-w-xs mx-auto">Tuliskan pesan ucapan doa restu Anda untuk kedua mempelai di bawah ini.</p>
+      </div>
+
+      <!-- Form RSVP -->
+      <form id="rsvp-form" onsubmit="saveRsvpToFirebase(event)" class="max-w-sm mx-auto bg-stone-50 p-6 rounded-3xl border border-stone-200 text-left space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-stone-700 mb-1">Nama Lengkap:</label>
+          <input type="text" id="rsvp-name" required placeholder="Masukkan nama Anda" class="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-xs font-medium focus:outline-none focus:border-stone-900">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-stone-700 mb-1">Konfirmasi Kehadiran:</label>
+          <select id="rsvp-status" class="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-xs font-medium focus:outline-none focus:border-stone-900">
+            <option value="Hadir">Ya, Saya Akan Hadir</option>
+            <option value="Ragu-ragu">Masih Ragu-ragu</option>
+            <option value="Tidak Hadir">Maaf, Tidak Bisa Hadir</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-stone-700 mb-1">Pesan & Ucapan Doa:</label>
+          <textarea id="rsvp-message" rows="3" required placeholder="Tuliskan ucapan doa restu..." class="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-xs font-medium focus:outline-none focus:border-stone-900"></textarea>
+        </div>
+
+        <button type="submit" id="rsvp-submit-btn" class="w-full bg-stone-900 text-white py-3.5 rounded-xl text-xs font-bold hover:bg-stone-800 transition flex items-center justify-center gap-2">
+          <i data-feather="send" class="w-3.5 h-3.5"></i> Kirim Ucapan & RSVP
+        </button>
+      </form>
+
+      <!-- Live Wishes List Box -->
+      <div class="max-w-sm mx-auto bg-white p-6 rounded-3xl border border-stone-200 text-left space-y-4 shadow-sm">
+        <h4 class="text-xs font-bold text-stone-900 uppercase tracking-wider flex items-center gap-2">
+          <i data-feather="message-square" class="w-4 h-4 text-stone-600"></i> Ucapan Doa Restu (<span id="wishes-count">0</span>)
+        </h4>
+        <div id="wishes-container" class="space-y-3 max-h-60 overflow-y-auto pr-1">
+          <p class="text-xs text-stone-400 italic text-center py-4">Memuat ucapan tamu...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- WEDDING GIFT / AMPLOP DIGITAL DUAL REKENING -->
+    <section class="py-16 px-8 text-center space-y-6 bg-stone-50/80 border-t border-stone-100" data-aos="fade-up">
+      <div class="space-y-2">
+        <span class="text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase block">WEDDING GIFT</span>
+        <h2 class="font-serif-luxury text-3xl font-normal text-stone-900">Amplop Digital</h2>
+        <p class="text-xs text-stone-500 leading-relaxed max-w-xs mx-auto">Doa restu Anda merupakan karunia terbesar bagi kami. Jika ingin memberikan hadiah, dapat melalui pilihan rekening di bawah ini:</p>
+      </div>
+
+      <div id="gift-banks-container" class="max-w-sm mx-auto space-y-4"></div>
+    </section>
+
+    <!-- LUXURY BRANDED FOOTER -->
+    <footer class="pt-16 pb-12 text-center text-xs text-stone-400 space-y-8 border-t border-stone-100 bg-white">
+      <div class="space-y-2">
+        <h3 id="footer-couple-name" class="font-serif-luxury text-stone-900 text-3xl italic">-</h3>
+        <p class="text-[10px] uppercase tracking-widest text-stone-400 font-semibold">Terima Kasih Atas Doa Restu Anda</p>
+      </div>
+
+      <!-- Pawarta.id Brand Card Highlight -->
+      <div class="max-w-xs mx-auto p-5 rounded-2xl bg-stone-950 text-white border border-stone-800 shadow-xl space-y-3">
+        <div class="flex items-center justify-center gap-2">
+          <div class="w-6 h-6 rounded-full bg-white text-stone-950 font-black text-[10px] flex items-center justify-center">P</div>
+          <span class="font-black tracking-tight text-sm text-white">Pawarta.id</span>
+        </div>
+        <p class="text-[10px] text-stone-400 leading-relaxed">Buat website undangan digital modern & elegan untuk momen spesial Anda.</p>
+        <a href="https://pawarta.radityabagus.store" target="_blank" class="inline-flex items-center justify-center gap-1.5 w-full bg-white hover:bg-stone-100 text-stone-950 text-[11px] font-bold py-2.5 rounded-xl transition">
+          <i data-feather="external-link" class="w-3 h-3"></i> Buat Undangan Anda
+        </a>
+      </div>
+
+      <div class="pt-2 text-[10px] text-stone-400">
+        © 2026 Powered by <a href="https://pawarta.radityabagus.store" target="_blank" class="font-bold text-stone-900 hover:underline">Pawarta.id</a>. All Rights Reserved.
+      </div>
+    </footer>
+
+  </main>
+
+
+  <!-- ========================================================= -->
+  <!-- 3. CONFIG & JAVASCRIPT LOGIC -->
+  <!-- ========================================================= -->
+  <script>
+    /* =========================================================
+       ⚙️ KONFIGURASI DATA UNDANGAN
+       ========================================================= */
+    const CONFIG_UNDANGAN = {
+      firebase: {
+        databaseURL: "https://pawarta-demo-default-rtdb.asia-southeast1.firebasedatabase.app",
+        templateSlug: "ethereal-pearl"
+      },
+
+      coupleName: "Arthur & Eleanor",
+      groom: {
+        name: "Arthur Pendelton, M.B.A.",
+        parents: "Putra Pertama dari Bpk. William & Ibu Catherine",
+        photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=80"
+      },
+      bride: {
+        name: "Eleanor Vance, S.Ds.",
+        parents: "Putri Kedua dari Bpk. Charles & Ibu Victoria",
+        photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80"
+      },
+
+      coverImage: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=80",
+      bgMusicUrl: "https://assets.mixkit.co/music/preview/mixkit-romantic-wedding-piano-melody-552.mp3",
+
+      quote: "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya.",
+      quoteSource: "— Q.S. Ar-Rum: 21",
+
+      gallery: [
+        "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=600&q=80"
+      ],
+
+      eventDateString: "Dec 12, 2026 09:00:00",
+      eventFormattedDate: "SABTU, 12 DESEMBER 2026",
+      event1: {
+        title: "Holy Matrimony",
+        date: "Sabtu, 12 Desember 2026",
+        time: "Pukul 09.00 - 11.00 WIB",
+        location: "Gereja Cathedral Grand Ballroom, Jakarta"
+      },
+      event2: {
+        title: "Wedding Reception",
+        date: "Sabtu, 12 Desember 2026",
+        time: "Pukul 12.00 - 15.00 WIB",
+        location: "Grand Ballroom Hotel Mulia, Jakarta"
+      },
+      googleMapsUrl: "https://maps.google.com",
+
+      giftBanks: [
+        {
+          name: "Bank BCA",
+          owner: "a.n. Arthur Pendelton",
+          accountNumber: "8801234567"
+        },
+        {
+          name: "Bank Mandiri",
+          owner: "a.n. Eleanor Vance",
+          accountNumber: "1370001234567"
+        }
+      ]
+    };
+
+    /* =========================================================
+       ENGINE LOGIC SYSTEM
+       ========================================================= */
+
+    let isFullGalleryShow = false;
+    let isPlaying = false;
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp({ databaseURL: CONFIG_UNDANGAN.firebase.databaseURL });
+    }
+    const db = firebase.database();
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById('page-title').innerText = `The Wedding of ${CONFIG_UNDANGAN.coupleName}`;
+      document.getElementById('cover-couple-name').innerText = CONFIG_UNDANGAN.coupleName;
+      document.getElementById('hero-couple-name').innerText = CONFIG_UNDANGAN.coupleName;
+      document.getElementById('footer-couple-name').innerText = CONFIG_UNDANGAN.coupleName;
+      document.getElementById('hero-event-date').innerText = CONFIG_UNDANGAN.eventFormattedDate;
+
+      document.getElementById('cover-bg-blur').style.backgroundImage = `url('${CONFIG_UNDANGAN.coverImage}')`;
+      document.getElementById('cover-thumb').src = CONFIG_UNDANGAN.coverImage;
+      document.getElementById('hero-bg').style.backgroundImage = `url('${CONFIG_UNDANGAN.coverImage}')`;
+      document.getElementById('bg-music-src').src = CONFIG_UNDANGAN.bgMusicUrl;
+
+      document.getElementById('quote-text').innerText = `"${CONFIG_UNDANGAN.quote}"`;
+      document.getElementById('quote-source').innerText = CONFIG_UNDANGAN.quoteSource;
+      document.getElementById('groom-name').innerText = CONFIG_UNDANGAN.groom.name;
+      document.getElementById('groom-parents').innerText = CONFIG_UNDANGAN.groom.parents;
+      document.getElementById('groom-photo').src = CONFIG_UNDANGAN.groom.photo;
+      document.getElementById('bride-name').innerText = CONFIG_UNDANGAN.bride.name;
+      document.getElementById('bride-parents').innerText = CONFIG_UNDANGAN.bride.parents;
+      document.getElementById('bride-photo').src = CONFIG_UNDANGAN.bride.photo;
+
+      document.getElementById('event1-title').innerText = CONFIG_UNDANGAN.event1.title;
+      document.getElementById('event1-date').innerText = CONFIG_UNDANGAN.event1.date;
+      document.getElementById('event1-time').innerText = CONFIG_UNDANGAN.event1.time;
+      document.getElementById('event1-location').innerText = CONFIG_UNDANGAN.event1.location;
+
+      document.getElementById('event2-title').innerText = CONFIG_UNDANGAN.event2.title;
+      document.getElementById('event2-date').innerText = CONFIG_UNDANGAN.event2.date;
+      document.getElementById('event2-time').innerText = CONFIG_UNDANGAN.event2.time;
+      document.getElementById('event2-location').innerText = CONFIG_UNDANGAN.event2.location;
+      document.getElementById('google-maps-link').href = CONFIG_UNDANGAN.googleMapsUrl;
+
+      renderBanks();
+      renderGallery();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const guestName = urlParams.get('to');
+      if (guestName) {
+        document.getElementById('guest-name').innerText = guestName;
+        document.getElementById('rsvp-name').value = guestName;
+      }
+
+      feather.replace();
+      AOS.init({ duration: 800, once: true, offset: 80 });
+      listenLiveWishes();
+    });
+
+    // Buka Undangan, Tampilkan Navbar, & Auto Play Music
+    function openInvitation() {
+      document.getElementById('cover-modal').classList.add('opened');
+      document.body.classList.remove('no-scroll');
+      
+      const navbar = document.getElementById('bottom-navbar');
+      navbar.classList.remove('hidden');
+      navbar.classList.add('flex');
+
+      // Auto Play Music
+      playMusic();
+    }
+
+    const music = document.getElementById('bg-music');
+
+    function playMusic() {
+      music.play().then(() => {
+        isPlaying = true;
+        updateMusicUI();
+      }).catch(err => {
+        console.log("Audio play blocked by browser policy:", err);
+      });
+    }
+
+    function toggleMusic() {
+      if (isPlaying) {
+        music.pause();
+        isPlaying = false;
+      } else {
+        music.play();
+        isPlaying = true;
+      }
+      updateMusicUI();
+    }
+
+    function updateMusicUI() {
+      const musicIcon = document.getElementById('music-icon');
+      const musicStatus = document.getElementById('music-text-status');
+
+      if (isPlaying) {
+        musicIcon.classList.add('animate-spin-slow');
+        musicStatus.innerText = "Music On";
+      } else {
+        musicIcon.classList.remove('animate-spin-slow');
+        musicStatus.innerText = "Music Off";
+      }
+    }
+
+    function renderBanks() {
+      const container = document.getElementById('gift-banks-container');
+      container.innerHTML = CONFIG_UNDANGAN.giftBanks.map(b => `
+        <div class="p-6 rounded-3xl bg-white border border-stone-200 text-left space-y-4 shadow-sm relative overflow-hidden" data-aos="zoom-in">
+          <div class="flex justify-between items-center border-b border-stone-100 pb-3">
+            <span class="font-bold text-stone-900 text-sm">${b.name}</span>
+            <span class="text-[10px] font-bold text-stone-400 uppercase bg-stone-100 px-2.5 py-1 rounded-md">${b.owner}</span>
+          </div>
+          <div>
+            <span class="text-xs text-stone-400 block">Nomor Rekening:</span>
+            <span class="font-mono text-lg font-black text-stone-900">${b.accountNumber}</span>
+          </div>
+          <button onclick="copyToClipboard('${b.accountNumber}')" class="w-full bg-stone-900 text-white py-3 rounded-xl text-xs font-bold hover:bg-stone-800 transition flex items-center justify-center gap-2">
+            <i data-feather="copy" class="w-3.5 h-3.5"></i> Salin Nomor Rekening
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function renderGallery() {
+      const container = document.getElementById('gallery-container');
+      const moreBtnBox = document.getElementById('gallery-more-btn-box');
+      const totalPhotos = CONFIG_UNDANGAN.gallery.length;
+
+      let displayPhotos = isFullGalleryShow ? CONFIG_UNDANGAN.gallery : CONFIG_UNDANGAN.gallery.slice(0, 4);
+
+      container.innerHTML = displayPhotos.map(imgUrl => `
+        <div onclick="openLightbox('${imgUrl}')" class="aspect-square bg-stone-200 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:opacity-90 transition transform hover:scale-95" data-aos="zoom-in">
+          <img src="${imgUrl}" alt="Gallery" class="w-full h-full object-cover">
+        </div>
+      `).join('');
+
+      if (totalPhotos > 4) {
+        moreBtnBox.classList.remove('hidden');
+        document.getElementById('gallery-btn-text').innerText = isFullGalleryShow ? "Sembunyikan Foto" : `Lihat Semua Foto (${totalPhotos})`;
+      } else {
+        moreBtnBox.classList.add('hidden');
+      }
+
+      feather.replace();
+    }
+
+    function toggleFullGallery() {
+      isFullGalleryShow = !isFullGalleryShow;
+      renderGallery();
+    }
+
+    function openLightbox(url) {
+      document.getElementById('lightbox-img').src = url;
+      document.getElementById('gallery-lightbox').classList.remove('hidden');
+    }
+    function closeLightbox() {
+      document.getElementById('gallery-lightbox').classList.add('hidden');
+    }
+
+    function saveRsvpToFirebase(e) {
+      e.preventDefault();
+      const name = document.getElementById('rsvp-name').value;
+      const status = document.getElementById('rsvp-status').value;
+      const message = document.getElementById('rsvp-message').value;
+      const btn = document.getElementById('rsvp-submit-btn');
+
+      btn.disabled = true;
+      btn.innerText = 'Mengirim...';
+
+      const wishRef = db.ref(`wishes/${CONFIG_UNDANGAN.firebase.templateSlug}`).push();
+      wishRef.set({
+        name: name,
+        status: status,
+        message: message,
+        timestamp: Date.now()
+      }).then(() => {
+        alert('Ucapan & RSVP Anda berhasil terkirim!');
+        document.getElementById('rsvp-form').reset();
+        btn.disabled = false;
+        btn.innerHTML = `<i data-feather="send" class="w-3.5 h-3.5"></i> Kirim Ucapan & RSVP`;
+        feather.replace();
+      }).catch(() => {
+        alert('Terjadi kesalahan saat menyimpan ucapan.');
+        btn.disabled = false;
+      });
+    }
+
+    function listenLiveWishes() {
+      db.ref(`wishes/${CONFIG_UNDANGAN.firebase.templateSlug}`).on('value', (snapshot) => {
+        const container = document.getElementById('wishes-container');
+        const countElem = document.getElementById('wishes-count');
+        const data = snapshot.val();
+
+        if (!data) {
+          container.innerHTML = `<p class="text-xs text-stone-400 italic text-center py-4">Belum ada ucapan. Jadilah yang pertama!</p>`;
+          countElem.innerText = "0";
+          return;
+        }
+
+        const wishesArray = Object.values(data).reverse();
+        countElem.innerText = wishesArray.length;
+
+        container.innerHTML = wishesArray.map(w => `
+          <div class="p-3 bg-stone-50 rounded-2xl border border-stone-100 text-xs space-y-1">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-stone-900">${escapeHtml(w.name)}</span>
+              <span class="text-[9px] font-bold px-2 py-0.5 rounded-md ${w.status === 'Hadir' ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-700'}">${w.status}</span>
+            </div>
+            <p class="text-stone-600 font-medium leading-snug">${escapeHtml(w.message)}</p>
+          </div>
+        `).join('');
+      });
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/[&<>"']/g, function(m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]; });
+    }
+
+    function addToGoogleCalendar() {
+      const title = encodeURIComponent(`The Wedding of ${CONFIG_UNDANGAN.coupleName}`);
+      const details = encodeURIComponent(`Resepsi Pernikahan ${CONFIG_UNDANGAN.coupleName} di ${CONFIG_UNDANGAN.event2.location}`);
+      const location = encodeURIComponent(CONFIG_UNDANGAN.event2.location);
+      const dates = "20261212T020000Z/20261212T080000Z";
+      
+      const calUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`;
+      window.open(calUrl, '_blank');
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      alert('Nomor rekening berhasil disalin!');
+    }
+
+    setInterval(() => {
+      const eventDate = new Date(CONFIG_UNDANGAN.eventDateString).getTime();
+      const now = new Date().getTime();
+      const diff = eventDate - now;
+
+      if (diff > 0) {
+        document.getElementById('cd-days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById('cd-hours').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        document.getElementById('cd-minutes').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        document.getElementById('cd-seconds').innerText = Math.floor((diff % (1000 * 60)) / 1000);
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

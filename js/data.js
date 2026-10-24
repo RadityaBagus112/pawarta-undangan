@@ -35,6 +35,19 @@ const CONFIG = {
       demoUrl: "/demo/minimalist-slate/",
       description: "Desain dark mode ultra-modern dengan sentuhan emas dan tipografi eksklusif.",
       features: ["Glassmorphism UI", "Dark Mode", "RSVP WhatsApp", "Google Maps"]
+    },
+
+    {
+      id: "ethereal-pearl",
+      title: "Ethereal Pearl Luxury",
+      category: "pernikahan",
+      categoryLabel: "Pernikahan",
+      price: "Rp 179.000",
+      badge: "Exclusive",
+      image: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=600&q=80",
+      demoUrl: "/demo/ethereal-pearl/",
+      description: "Konsep ultra-clean minimalis bernuansa pearl white dengan tipografi klasik Bodoni.",
+      features: ["Bodoni Elegance Typography", "Amplop Digital Direct Copy", "Google Maps Sync", "Countdown Timer"]
     }
   ],
 
