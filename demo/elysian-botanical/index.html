@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Wedding of Romeo & Juliet</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-serif-luxury { font-family: 'Playfair Display', serif; }
+    .bg-paper {
+      background-color: #FAF8F5;
+      background-image: radial-gradient(#E8E2D9 0.75px, transparent 0.75px);
+      background-size: 24px 24px;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #FAF8F5; }
+    ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 99px; }
+    #cover-modal { transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.8s ease; }
+    #cover-modal.opened { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+  </style>
+</head>
+<body class="bg-paper text-slate-800 antialiased overflow-x-hidden">
+
+  <!-- OPENING COVER -->
+  <div id="cover-modal" class="fixed inset-0 z-50 bg-slate-950 text-white flex flex-col items-center justify-between p-8 text-center bg-cover bg-center relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/40 z-0"></div>
+
+    <div class="relative z-10 pt-12 space-y-3">
+      <span class="text-[11px] font-bold tracking-[0.3em] uppercase text-amber-400 block">THE WEDDING OF</span>
+      <h1 class="font-serif-luxury text-4xl sm:text-6xl text-amber-100 font-normal tracking-wide">Romeo & Juliet</h1>
+    </div>
+
+    <div class="relative z-10 my-auto max-w-sm w-full bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 shadow-2xl space-y-2">
+      <span class="text-xs text-slate-300 font-medium block">Kepada Yth. Bapak/Ibu/Saudara/i:</span>
+      <h2 id="guest-name" class="text-xl font-bold text-amber-200">Tamu Undangan</h2>
+      <p class="text-[10px] text-slate-400 italic leading-relaxed">Tanpa Mengurangi Rasa Hormat, Kami Mengundang Anda Untuk Hadir Dalam Acara Bahagia Kami.</p>
+    </div>
+
+    <div class="relative z-10 pb-8">
+      <button onclick="openInvitation()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs uppercase tracking-widest px-8 py-4 rounded-full shadow-2xl transition-all transform hover:scale-105 flex items-center gap-2">
+        <i data-feather="mail" class="w-4 h-4"></i> Buka Undangan
+      </button>
+    </div>
+  </div>
+
+  <audio id="bg-music" loop>
+    <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-wedding-piano-melody-552.mp3" type="audio/mpeg">
+  </audio>
+
+  <button id="music-btn" onclick="toggleMusic()" class="fixed bottom-6 right-6 z-40 w-12 h-12 bg-white/90 backdrop-blur-md text-slate-900 rounded-full shadow-2xl border border-amber-300/60 flex items-center justify-center transition-all transform hover:scale-110 hidden">
+    <i data-feather="music" id="music-icon" class="w-5 h-5 text-amber-600"></i>
+  </button>
+
+  <!-- MAIN INVITATION CONTENT -->
+  <main class="max-w-xl mx-auto bg-white min-h-screen shadow-2xl border-x border-amber-100/60 relative pb-20">
+
+    <section class="relative h-[85vh] flex items-end justify-center pb-16 text-center text-white bg-cover bg-center overflow-hidden" style="background-image: url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80');">
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+      
+      <div class="relative z-10 space-y-4 px-6">
+        <span class="text-xs tracking-[0.3em] text-amber-300 font-extrabold uppercase">WE ARE GETTING MARRIED</span>
+        <h1 class="font-serif-luxury text-5xl sm:text-6xl text-amber-100 font-normal">Romeo & Juliet</h1>
+        <p class="text-xs tracking-widest font-semibold text-slate-300">SABTU, 24 DESEMBER 2026</p>
+        
+        <div class="grid grid-cols-4 gap-2 pt-6 max-w-xs mx-auto">
+          <div class="bg-slate-900/80 backdrop-blur-md p-2.5 rounded-2xl border border-amber-500/30">
+            <span id="cd-days" class="text-lg font-black text-amber-300 block">00</span>
+            <span class="text-[9px] uppercase font-bold text-slate-400">Hari</span>
+          </div>
+          <div class="bg-slate-900/80 backdrop-blur-md p-2.5 rounded-2xl border border-amber-500/30">
+            <span id="cd-hours" class="text-lg font-black text-amber-300 block">00</span>
+            <span class="text-[9px] uppercase font-bold text-slate-400">Jam</span>
+          </div>
+          <div class="bg-slate-900/80 backdrop-blur-md p-2.5 rounded-2xl border border-amber-500/30">
+            <span id="cd-minutes" class="text-lg font-black text-amber-300 block">00</span>
+            <span class="text-[9px] uppercase font-bold text-slate-400">Menit</span>
+          </div>
+          <div class="bg-slate-900/80 backdrop-blur-md p-2.5 rounded-2xl border border-amber-500/30">
+            <span id="cd-seconds" class="text-lg font-black text-amber-300 block">00</span>
+            <span class="text-[9px] uppercase font-bold text-slate-400">Detik</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16 px-8 text-center bg-amber-50/40 border-b border-amber-100">
+      <i data-feather="heart" class="w-6 h-6 text-amber-600 mx-auto mb-4"></i>
+      <p class="font-serif-luxury italic text-slate-700 text-sm leading-relaxed max-w-md mx-auto mb-4">
+        "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya."
+      </p>
+      <span class="text-[11px] font-bold text-amber-800 uppercase tracking-widest">— Q.S. Ar-Rum: 21</span>
+    </section>
+
+    <section class="py-16 px-8 text-center space-y-12">
+      <div class="space-y-2">
+        <span class="text-[10px] font-extrabold tracking-widest text-amber-600 uppercase">MEMPELAI BAHAGIA</span>
+        <h2 class="font-serif-luxury text-3xl font-bold text-slate-900">Pasangan Mempelai</h2>
+      </div>
+
+      <div class="space-y-4">
+        <div class="w-40 h-40 mx-auto rounded-full overflow-hidden p-1.5 bg-gradient-to-tr from-amber-400 to-amber-100 shadow-xl">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80" alt="Groom" class="w-full h-full object-cover rounded-full">
+        </div>
+        <div>
+          <h3 class="font-serif-luxury text-2xl font-bold text-slate-900">Romeo Pratama, S.T.</h3>
+          <p class="text-xs text-slate-500 font-medium mt-1">Putra Pertama dari Bapak Ahmad & Ibu Siti</p>
+        </div>
+      </div>
+
+      <div class="font-serif-luxury text-3xl text-amber-600 font-italic">&</div>
+
+      <div class="space-y-4">
+        <div class="w-40 h-40 mx-auto rounded-full overflow-hidden p-1.5 bg-gradient-to-tr from-amber-400 to-amber-100 shadow-xl">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80" alt="Bride" class="w-full h-full object-cover rounded-full">
+        </div>
+        <div>
+          <h3 class="font-serif-luxury text-2xl font-bold text-slate-900">Juliet Lestari, S.Ked.</h3>
+          <p class="text-xs text-slate-500 font-medium mt-1">Putri Kedua dari Bapak Budi & Ibu Rahma</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16 px-8 bg-slate-900 text-white text-center rounded-3xl mx-4 my-8 shadow-2xl relative overflow-hidden">
+      <div class="space-y-2 mb-10">
+        <span class="text-[10px] font-extrabold tracking-widest text-amber-400 uppercase">SAVE THE DATE</span>
+        <h2 class="font-serif-luxury text-3xl font-bold text-amber-100">Rangkaian Acara</h2>
+      </div>
+
+      <div class="space-y-8 max-w-sm mx-auto">
+        <div class="p-6 rounded-2xl bg-slate-800/80 border border-amber-500/30 space-y-3">
+          <h3 class="font-serif-luxury text-xl font-bold text-amber-300">Akad Nikah</h3>
+          <div class="text-xs text-slate-300 space-y-1">
+            <p class="font-bold text-white">Sabtu, 24 Desember 2026</p>
+            <p>Pukul 08.00 - 10.00 WIB</p>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-800/80 border border-amber-500/30 space-y-3">
+          <h3 class="font-serif-luxury text-xl font-bold text-amber-300">Resepsi Pernikahan</h3>
+          <div class="text-xs text-slate-300 space-y-1">
+            <p class="font-bold text-white">Sabtu, 24 Desember 2026</p>
+            <p>Pukul 11.00 - 14.00 WIB</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="pt-12 pb-8 text-center text-xs text-slate-400 space-y-2 border-t border-slate-100">
+      <p class="font-serif-luxury text-slate-800 text-base font-bold">Romeo & Juliet</p>
+      <p>© 2026 Powered by <a href="https://pawarta.radityabagus.store" target="_blank" class="font-bold text-amber-700 hover:underline">Pawarta.id</a></p>
+    </footer>
+
+  </main>
+
+  <script>
+    feather.replace();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const guest = urlParams.get('to');
+    if (guest) {
+      document.getElementById('guest-name').innerText = guest;
+    }
+
+    function openInvitation() {
+      document.getElementById('cover-modal').classList.add('opened');
+      document.getElementById('music-btn').classList.remove('hidden');
+      toggleMusic();
+    }
+
+    const music = document.getElementById('bg-music');
+    let isPlaying = false;
+
+    function toggleMusic() {
+      if (isPlaying) {
+        music.pause();
+        document.getElementById('music-icon').setAttribute('data-feather', 'volume-x');
+      } else {
+        music.play().catch(() => {});
+        document.getElementById('music-icon').setAttribute('data-feather', 'music');
+      }
+      isPlaying = !isPlaying;
+      feather.replace();
+    }
+
+    const eventDate = new Date("Dec 24, 2026 08:00:00").getTime();
+    setInterval(() => {
+      const now = new Date().getTime();
+      const diff = eventDate - now;
+
+      if (diff > 0) {
+        document.getElementById('cd-days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById('cd-hours').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        document.getElementById('cd-minutes').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        document.getElementById('cd-seconds').innerText = Math.floor((diff % (1000 * 60)) / 1000);
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

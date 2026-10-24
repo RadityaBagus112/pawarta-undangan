@@ -23,76 +23,29 @@ const CONFIG = {
   // Untuk menambah template baru, cukup salin satu objek { ... } di bawah ini
   templates: [
     {
-      id: "tpl-01",
+      id: "elysian-botanical",
       title: "Elysian Botanical",
-      category: "pernikahan", // Pilihan: "pernikahan", "khitan", "birthday"
+      category: "pernikahan",
       categoryLabel: "Pernikahan",
       price: "Rp 149.000",
       badge: "Best Seller",
-      image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80",
-      description: "Desain keemasan floral elegan dengan animasi smooth scroll, galeri foto grid & musik latar instrumen.",
-      demoUrl: "https://example.com/demo/elysian-botanical",
-      features: ["Cover Interaktif", "Countdown Timer", "Peta Location", "Buku Tamu & RSVP", "Amplop Digital QRIS"]
+      image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80",
+      demoUrl: "/demo/elysian-botanical/", // URL internal demo
+      description: "Tema dedaunan botani dengan nuansa hijau sage & emas yang tenang dan elegan.",
+      features: ["RSVP WhatsApp", "Amplop Digital", "Google Maps", "Countdown"]
     },
+
     {
-      id: "tpl-02",
-      title: "Minimalist Slate Pro",
+      id: "elegant-minimalist",
+      title: "Elegant Minimalist",
       category: "pernikahan",
       categoryLabel: "Pernikahan",
-      price: "Rp 129.000",
-      badge: "Apple Style",
-      image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80",
-      description: "Konsep ultra-clean modern dengan tipografi tegas, fokus pada foto resolusi tinggi dan cerita cinta.",
-      demoUrl: "https://example.com/demo/minimalist-slate",
-      features: ["Glassmorphism UI", "Love Story Timeline", "Soundtrack Custom", "RSVP via WA", "Unlimited Guests"]
-    },
-    {
-      id: "tpl-03",
-      title: "Royal Emerald Khitan",
-      category: "khitan",
-      categoryLabel: "Khitanan",
-      price: "Rp 89.000",
-      badge: "Favorit",
-      image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=800&q=80",
-      description: "Nuansa hijau zamrud islami dan keemasan untuk syukuran khitanan buah hati tercinta.",
-      demoUrl: "https://example.com/demo/emerald-khitan",
-      features: ["Doa & Syukuran", "Video Header", "Map Navigasi", "Doa Tamu", "Gift Box Digital"]
-    },
-    {
-      id: "tpl-04",
-      title: "Golden Glamour 17th",
-      category: "birthday",
-      categoryLabel: "Ulang Tahun",
-      price: "Rp 79.000",
-      badge: "Trending",
-      image: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80",
-      description: "Gaya pesta malam mewah nan enerjik untuk momen Sweet Sixteen atau Sweet Seventeen.",
-      demoUrl: "https://example.com/demo/golden-glamour",
-      features: ["Dresscode Guide", "RSVP Konfirmasi", "Galeri Pesta", "Musik Latar", "Waze & Maps Integrasi"]
-    },
-    {
-      id: "tpl-05",
-      title: "Javanese Traditional Luxury",
-      category: "pernikahan",
-      categoryLabel: "Pernikahan",
-      price: "Rp 159.000",
-      badge: "Adat",
-      image: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=80",
-      description: "Sentuhan motif ornamen ukir tradisional yang dipadukan dengan kemewahan modern.",
-      demoUrl: "https://example.com/demo/javanese-luxury",
-      features: ["Ornamen Custom", "Prosesi Adat Info", "Amplop QRIS", "Wishes Board", "Google Calendar Sync"]
-    },
-    {
-      id: "tpl-06",
-      title: "Little Superhero",
-      category: "khitan",
-      categoryLabel: "Khitanan",
-      price: "Rp 89.000",
-      badge: "Baru",
-      image: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=800&q=80",
-      description: "Tema ceria dan modern untuk syukuran khitan anak dengan efek animasi kartun lembut.",
-      demoUrl: "https://example.com/demo/little-superhero",
-      features: ["Karakter Ceria", "Countdown Acara", "Konfirmasi Kehadiran", "Petunjuk Lokasi"]
+      price: "Rp 149.000",
+      badge: "Best Seller",
+      image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80",
+      demoUrl: "/demo/wedding-invitation", // URL internal demo
+      description: "Tema dedaunan botani dengan nuansa hijau sage & emas yang tenang dan elegan.",
+      features: ["RSVP WhatsApp", "Amplop Digital", "Google Maps", "Countdown"]
     }
   ],
 

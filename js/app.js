@@ -108,7 +108,7 @@ function renderTemplates(templates) {
       </div>
 
       <div class="p-6 pt-0 flex gap-2">
-        <button onclick="openDemoModal('${tpl.id}', '${tpl.title}', '${tpl.demoUrl}', '${tpl.categoryLabel}')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-900 py-3 rounded-full text-xs font-bold transition">
+        <button onclick="openDemoModal('${tpl.id}')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-900 py-3 rounded-full text-xs font-bold transition">
           Live Demo
         </button>
         <button onclick="selectTemplateForOrder('${tpl.id}')" class="flex-1 text-center bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-full text-xs font-bold transition">
@@ -333,32 +333,57 @@ function orderViaWhatsApp() {
    MODAL LIVE DEMO SIMULATOR CONTROLLER
    ========================================================= */
 
-let currentModalTemplateId = "";
+// Fungsi untuk membuka Modal Preview Live Demo
+function openDemoModal(templateId) {
+  // Ambil data dari CONFIG.templates
+  const template = CONFIG.templates.find(t => t.id === templateId);
+  if (!template) return;
 
-function openDemoModal(templateId, title, url, categoryLabel) {
-  currentModalTemplateId = templateId;
-  
-  const modalTitle = document.getElementById("modal-title");
-  const modalCategory = document.getElementById("modal-category");
-  const modalFullDemo = document.getElementById("modal-full-demo");
-  const demoModal = document.getElementById("demo-modal");
+  // Set nilai elemen header & iframe modal
+  const categoryElem = document.getElementById('modal-category');
+  const titleElem = document.getElementById('modal-title');
+  const iframe = document.getElementById('modal-iframe');
+  const fullDemoBtn = document.getElementById('modal-full-demo-btn');
 
-  if (modalTitle) modalTitle.innerText = title;
-  if (modalCategory) modalCategory.innerText = categoryLabel || "LIVE DEMO";
-  if (modalFullDemo) modalFullDemo.href = url || "#";
-  if (demoModal) demoModal.classList.remove("hidden");
-}
+  if (categoryElem) categoryElem.innerText = template.categoryLabel;
+  if (titleElem) titleElem.innerText = template.title;
+  if (iframe) iframe.src = template.demoUrl;
+  if (fullDemoBtn) fullDemoBtn.href = template.demoUrl;
 
-function selectFromModal() {
-  closeDemoModal();
-  if (currentModalTemplateId) {
-    selectTemplateForOrder(currentModalTemplateId);
+  // Simpan ID template aktif pada modal untuk referensi tombol pilih
+  const modal = document.getElementById('demo-modal');
+  if (modal) {
+    modal.setAttribute('data-active-id', templateId);
+    modal.classList.remove('opacity-0', 'pointer-events-none');
   }
+
+  if (window.feather) feather.replace();
 }
 
+// Fungsi untuk menutup Modal
 function closeDemoModal() {
-  const demoModal = document.getElementById("demo-modal");
-  if (demoModal) demoModal.classList.add("hidden");
+  const modal = document.getElementById('demo-modal');
+  if (modal) {
+    modal.classList.add('opacity-0', 'pointer-events-none');
+  }
+  
+  // Reset iframe agar audio/video dari template langsung berhenti
+  const iframe = document.getElementById('modal-iframe');
+  if (iframe) iframe.src = 'about:blank';
+}
+
+// Fungsi tombol 'Pilih Template' di dalam modal
+function selectTemplateFromModal() {
+  const modal = document.getElementById('demo-modal');
+  const activeId = modal ? modal.getAttribute('data-active-id') : null;
+  
+  closeDemoModal();
+
+  if (activeId) {
+    selectTemplateForOrder(activeId);
+  } else {
+    scrollToOrderBox();
+  }
 }
 
 /* =========================================================
