@@ -48,6 +48,19 @@ const CONFIG = {
       demoUrl: "/demo/ethereal-pearl/",
       description: "Konsep ultra-clean minimalis bernuansa pearl white dengan tipografi klasik Bodoni.",
       features: ["Bodoni Elegance Typography", "Amplop Digital Direct Copy", "Google Maps Sync", "Countdown Timer"]
+    },
+
+    {
+      id: "elysian-slate",
+      title: "Elysian Slate & Gold",
+      category: "pernikahan",
+      categoryLabel: "Pernikahan",
+      price: "Rp 199.000",
+      badge: "Premium Dark",
+      image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80",
+      demoUrl: "/demo/elysian-slate/",
+      description: "Konsep Dark Mode Slate & Gold yang sangat mewah dengan tipografi Sinzel dan aksen emas terpadu.",
+      features: ["Dark Slate Gold Theme", "Cinzel Serif Luxury", "Firebase Realtime RSVP", "Floating iOS Dock Navbar"]
     }
   ],
 
