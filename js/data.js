@@ -22,30 +22,19 @@ const CONFIG = {
   // 1. DATA TEMPLATE UNDANGAN
   // Untuk menambah template baru, cukup salin satu objek { ... } di bawah ini
   templates: [
-    {
-      id: "elysian-botanical",
-      title: "Elysian Botanical",
-      category: "pernikahan",
-      categoryLabel: "Pernikahan",
-      price: "Rp 149.000",
-      badge: "Best Seller",
-      image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80",
-      demoUrl: "/demo/elysian-botanical/", // URL internal demo
-      description: "Tema dedaunan botani dengan nuansa hijau sage & emas yang tenang dan elegan.",
-      features: ["RSVP WhatsApp", "Amplop Digital", "Google Maps", "Countdown"]
-    },
+    
 
     {
-      id: "elegant-minimalist",
-      title: "Elegant Minimalist",
+      id: "minimalist-slate",
+      title: "Minimalist Slate Gold",
       category: "pernikahan",
       categoryLabel: "Pernikahan",
-      price: "Rp 149.000",
-      badge: "Best Seller",
-      image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80",
-      demoUrl: "/demo/wedding-invitation", // URL internal demo
-      description: "Tema dedaunan botani dengan nuansa hijau sage & emas yang tenang dan elegan.",
-      features: ["RSVP WhatsApp", "Amplop Digital", "Google Maps", "Countdown"]
+      price: "Rp 169.000",
+      badge: "New Release",
+      image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80",
+      demoUrl: "/demo/minimalist-slate/",
+      description: "Desain dark mode ultra-modern dengan sentuhan emas dan tipografi eksklusif.",
+      features: ["Glassmorphism UI", "Dark Mode", "RSVP WhatsApp", "Google Maps"]
     }
   ],
 

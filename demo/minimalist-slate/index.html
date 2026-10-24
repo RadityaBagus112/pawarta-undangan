@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Wedding of Alex & Clara</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-serif-luxury { font-family: 'Cormorant Garamond', serif; }
+    
+    #cover-modal { 
+      transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.8s ease; 
+    }
+    #cover-modal.opened { 
+      transform: translateY(-100%); 
+      opacity: 0; 
+      pointer-events: none; 
+    }
+
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased selection:bg-amber-500 selection:text-slate-950 overflow-x-hidden">
+
+  <!-- OPENING COVER ENVELOPE -->
+  <div id="cover-modal" class="fixed inset-0 z-50 bg-slate-950 text-white flex flex-col items-center justify-between p-8 text-center relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black z-0"></div>
+
+    <div class="relative z-10 pt-12 space-y-2">
+      <span class="text-[10px] font-black tracking-[0.4em] uppercase text-amber-400 block">THE WEDDING CELEBRATION OF</span>
+      <h1 class="font-serif-luxury text-5xl sm:text-7xl text-white font-normal tracking-wide">Alex & Clara</h1>
+    </div>
+
+    <div class="relative z-10 my-auto max-w-sm w-full glass-card p-6 rounded-3xl shadow-2xl space-y-2">
+      <span class="text-xs text-slate-400 font-medium block">Kepada Yth. Bapak/Ibu/Saudara/i:</span>
+      <h2 id="guest-name" class="text-xl font-extrabold text-amber-300">Tamu Undangan</h2>
+      <p class="text-[10px] text-slate-400 italic leading-relaxed">Tanpa mengurangi rasa hormat, kami mengundang Anda untuk hadir di acara kami.</p>
+    </div>
+
+    <div class="relative z-10 pb-8">
+      <button onclick="openInvitation()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs uppercase tracking-widest px-8 py-4 rounded-full shadow-2xl transition-all transform hover:scale-105 flex items-center gap-2">
+        <i data-feather="mail" class="w-4 h-4"></i> Buka Undangan
+      </button>
+    </div>
+  </div>
+
+  <audio id="bg-music" loop>
+    <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-wedding-piano-melody-552.mp3" type="audio/mpeg">
+  </audio>
+
+  <button id="music-btn" onclick="toggleMusic()" class="fixed bottom-6 right-6 z-40 w-12 h-12 bg-slate-900/90 backdrop-blur-md text-amber-400 rounded-full shadow-2xl border border-amber-500/30 flex items-center justify-center transition-all transform hover:scale-110 hidden">
+    <i data-feather="music" id="music-icon" class="w-5 h-5"></i>
+  </button>
+
+  <!-- MAIN INVITATION CONTENT -->
+  <main class="max-w-xl mx-auto bg-slate-900 min-h-screen shadow-2xl border-x border-slate-800 relative pb-20">
+
+    <!-- HERO SECTION -->
+    <section class="relative h-[85vh] flex items-end justify-center pb-16 text-center text-white bg-cover bg-center overflow-hidden" style="background-image: url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=80');">
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
+      
+      <div class="relative z-10 space-y-4 px-6">
+        <span class="text-xs tracking-[0.3em] text-amber-400 font-black uppercase">THE WEDDING DAY</span>
+        <h1 class="font-serif-luxury text-6xl font-normal text-slate-100">Alex & Clara</h1>
+        <p class="text-xs tracking-widest font-semibold text-slate-400">MINGGU, 10 OKTOBER 2026</p>
+        
+        <!-- Live Countdown Timer -->
+        <div class="grid grid-cols-4 gap-2 pt-6 max-w-xs mx-auto">
+          <div class="glass-card p-3 rounded-2xl border border-amber-500/20">
+            <span id="cd-days" class="text-xl font-black text-amber-400 block">00</span>
+            <span class="text-[9px] uppercase font-bold text-slate-400">Hari</span>
+          </div>
+          <div class="glass-card p-3 rounded-2xl border border-amber-500/20">
+            <span id="cd-hours" class="text-xl font-black text-amber-400 block">00</span>
+            <span class="text-[9px] uppercase font-bold text-slate-400">Jam</span>
+          </div>
+          <div class="glass-card p-3 rounded-2xl border border-amber-500/20">
+            <span id="cd-minutes" class="text-xl font-black text-amber-400 block">00</span>
+            <span class="text-[9px] uppercase font-bold text-slate-400">Menit</span>
+          </div>
+          <div class="glass-card p-3 rounded-2xl border border-amber-500/20">
+            <span id="cd-seconds" class="text-xl font-black text-amber-400 block">00</span>
+            <span class="text-[9px] uppercase font-bold text-slate-400">Detik</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COUPLE SECTION -->
+    <section class="py-16 px-8 text-center space-y-12 bg-slate-900">
+      <div class="space-y-2">
+        <span class="text-[10px] font-extrabold tracking-widest text-amber-400 uppercase">OUR LOVE STORY</span>
+        <h2 class="font-serif-luxury text-4xl font-bold text-white">Mempelai Pria & Wanita</h2>
+      </div>
+
+      <!-- Groom -->
+      <div class="space-y-4">
+        <div class="w-36 h-36 mx-auto rounded-full overflow-hidden p-1 bg-gradient-to-tr from-amber-400 to-slate-700 shadow-2xl">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80" alt="Groom" class="w-full h-full object-cover rounded-full">
+        </div>
+        <div>
+          <h3 class="font-serif-luxury text-3xl font-bold text-slate-100">Alexander Wright</h3>
+          <p class="text-xs text-slate-400 font-medium mt-1">Putra dari Bpk. Robert & Ibu Elena</p>
+        </div>
+      </div>
+
+      <div class="font-serif-luxury text-4xl text-amber-400 italic">&</div>
+
+      <!-- Bride -->
+      <div class="space-y-4">
+        <div class="w-36 h-36 mx-auto rounded-full overflow-hidden p-1 bg-gradient-to-tr from-amber-400 to-slate-700 shadow-2xl">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80" alt="Bride" class="w-full h-full object-cover rounded-full">
+        </div>
+        <div>
+          <h3 class="font-serif-luxury text-3xl font-bold text-slate-100">Clara Amanda</h3>
+          <p class="text-xs text-slate-400 font-medium mt-1">Putri dari Bpk. David & Ibu Grace</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- EVENT DETAILS -->
+    <section class="py-16 px-8 bg-slate-950 text-center rounded-3xl mx-4 my-8 border border-slate-800 shadow-2xl">
+      <div class="space-y-2 mb-10">
+        <span class="text-[10px] font-extrabold tracking-widest text-amber-400 uppercase">WHERE & WHEN</span>
+        <h2 class="font-serif-luxury text-4xl font-bold text-white">Waktu & Lokasi</h2>
+      </div>
+
+      <div class="space-y-6 max-w-sm mx-auto">
+        <div class="p-6 rounded-2xl glass-card space-y-2 text-left border-l-4 border-amber-400">
+          <h3 class="font-serif-luxury text-2xl font-bold text-amber-300">Akad Nikah</h3>
+          <p class="text-xs font-bold text-white">Minggu, 10 Oktober 2026</p>
+          <p class="text-xs text-slate-400">Pukul 09.00 WIB - Selesai</p>
+          <p class="text-xs text-slate-400 pt-2">The Glass House Hotel, Jakarta South</p>
+        </div>
+
+        <div class="p-6 rounded-2xl glass-card space-y-2 text-left border-l-4 border-amber-400">
+          <h3 class="font-serif-luxury text-2xl font-bold text-amber-300">Resepsi</h3>
+          <p class="text-xs font-bold text-white">Minggu, 10 Oktober 2026</p>
+          <p class="text-xs text-slate-400">Pukul 11.30 WIB - 15.00 WIB</p>
+          <p class="text-xs text-slate-400 pt-2">The Glass House Hotel, Jakarta South</p>
+        </div>
+
+        <a href="https://maps.google.com" target="_blank" class="inline-flex items-center justify-center gap-2 w-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs uppercase py-4 rounded-xl transition shadow-lg">
+          <i data-feather="map-pin" class="w-4 h-4"></i> Petunjuk Lokasi Google Maps
+        </a>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="pt-12 pb-8 text-center text-xs text-slate-500 space-y-2 border-t border-slate-800">
+      <p class="font-serif-luxury text-slate-200 text-lg font-bold">Alex & Clara</p>
+      <p>© 2026 Created with <a href="https://pawarta.radityabagus.store" target="_blank" class="font-bold text-amber-400 hover:underline">Pawarta.id</a></p>
+    </footer>
+
+  </main>
+
+  <script>
+    feather.replace();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const guest = urlParams.get('to');
+    if (guest) document.getElementById('guest-name').innerText = guest;
+
+    function openInvitation() {
+      document.getElementById('cover-modal').classList.add('opened');
+      document.getElementById('music-btn').classList.remove('hidden');
+      toggleMusic();
+    }
+
+    const music = document.getElementById('bg-music');
+    let isPlaying = false;
+
+    function toggleMusic() {
+      if (isPlaying) {
+        music.pause();
+        document.getElementById('music-icon').setAttribute('data-feather', 'volume-x');
+      } else {
+        music.play().catch(() => {});
+        document.getElementById('music-icon').setAttribute('data-feather', 'music');
+      }
+      isPlaying = !isPlaying;
+      feather.replace();
+    }
+
+    const eventDate = new Date("Oct 10, 2026 09:00:00").getTime();
+    setInterval(() => {
+      const now = new Date().getTime();
+      const diff = eventDate - now;
+
+      if (diff > 0) {
+        document.getElementById('cd-days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById('cd-hours').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        document.getElementById('cd-minutes').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        document.getElementById('cd-seconds').innerText = Math.floor((diff % (1000 * 60)) / 1000);
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
